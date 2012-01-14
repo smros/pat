@@ -3,25 +3,31 @@
 import os.path
 import httplib
 import json
+from string import Template
 from ConfigParser import RawConfigParser
 
 # AgileZen-related constants, read API key from cfg.
-CFG_PATH = os.path.join(os.path.dirname(__file__), '..', 'notify.cfg')
+CFG_PATH = os.path.join(os.path.dirname(__file__), '..', 'settings.cfg')
 CONFIG = RawConfigParser()
 CONFIG.read(CFG_PATH)
-API_KEY = CONFIG.get('api', 'key')
+API_KEY = CONFIG.get('agilezen', 'api_key')
 API_DOMAIN = 'agilezen.com'
 API_PATH_PREFIX = '/api/v1'
 API_HEADERS = {
     "X-Zen-ApiKey": API_KEY,
     "Content-Type": "application/json" }
 PROJECTS_URL = 'https://agilezen.com/api/v1/projects'
+STORIES_URL = 'https://agilezen.com/api/v1/projects/${project_id}/stories'
 
 
 def get_projects():
     """Return a list of all projects."""
     conn = httplib.HTTPSConnection(API_DOMAIN)
     conn.request("GET", PROJECTS_URL, headers=API_HEADERS)
+    print 'got here 3'
+    print PROJECTS_URL
+    print API_HEADERS
+    print API_DOMAIN
     response = conn.getresponse().read()
     return _parse_response(response)
 
@@ -46,6 +52,20 @@ def get_people(project_id, role = None):
         for each in data['roles']:
             result += each['members']
         return result
+
+def list_stories(project_id):
+    """Return a list of all stories."""
+    conn = httplib.HTTPSConnection(API_DOMAIN)
+    t = Template(STORIES_URL)
+    url = t.substitute(dict(project_id=project_id)) + "?with=details,comments,tasks"
+    print 'got here 2'
+    print url
+    print API_HEADERS
+    print API_DOMAIN
+    conn.request("GET", url, headers=API_HEADERS)
+    response = conn.getresponse().read()
+    print response
+    return _parse_response(response)
 
 def get_story(project_id, story_id):
     """Return the details and comments of a story."""
