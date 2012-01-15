@@ -22,7 +22,6 @@ def _parse_response(response):
 
 def _detect(fun, seq):
     '''Return the first element that satisfies the predicate fun.'''
-    # WFT is this bullshit?
     
     for item in seq:
         if fun(item):
@@ -69,6 +68,15 @@ class Project(object):
             story = Story(story_from_azen)
             self.stories.append(story)
 
+    def _detect(self, fun, seq):
+        '''Return the first element that satisfies the predicate fun.'''
+        # I don't like this one bit <gis>
+        
+        for item in seq:
+            if fun(item):
+                return item
+        return None
+
     def az_api_list_stories(self):
         '''Return a list of all stories.'''
         conn = httplib.HTTPSConnection(API_DOMAIN)
@@ -88,13 +96,18 @@ class Project(object):
         data = _parse_response(response)
         
         if role is not None:
-            role_dict = _detect(lambda r: r['name'] == role, data['roles'])
+            # there has to be a better way to do this than "self._detect"
+            
+            role_dict = self._detect(
+                lambda r: r['name'] == role, data['roles']
+            )
             
             if (role_dict):
                 return role_dict['members']
             else:
-                raise APIException('Failed to read members with role <'
-                    + role + '> from API.')
+                raise APIException(
+                    'Failed to read members with role <' + role + '> from API.'
+                )
         else:
             result = []
             

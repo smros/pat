@@ -1,4 +1,7 @@
-AGILE_ZEN_API_KEY = '1b40a889322e460e89a575dab15f7419'
+# This app requires a "settings.py" file. Use this file as a template
+# and put your AgileZen API key in AGILE_ZEN_API_KEY
+
+AGILE_ZEN_API_KEY = '<your agilezen api key kere>'
 
 API_DOMAIN = 'agilezen.com'
 API_PATH_PREFIX = '/api/v1'
