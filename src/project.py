@@ -1,18 +1,106 @@
 import os
-import api
+import os.path
+import httplib
+import json
+from string import Template
+
+from settings import *
+
 from story import Story
 
 
+def _parse_response(response):
+    '''Try to parse the JSON response. Raises APIException on failure.'''
+    
+    if response is None:
+        raise APIException('Failed to read data from API.')
+    try:
+        return json.loads(response)
+    except:
+        raise APIException('Failed to parse data from API.')
+
+
+def _detect(fun, seq):
+    '''Return the first element that satisfies the predicate fun.'''
+    # WFT is this bullshit?
+    
+    for item in seq:
+        if fun(item):
+            return item
+    return None
+
+
+class APIException(Exception):
+    '''Raised when API is not accessible or data cannot be parsed.'''
+    pass
+
+
 class Project(object):
+
+    @classmethod
+    def get_projects(cls):
+        conn = httplib.HTTPSConnection(API_DOMAIN)
+        conn.request('GET', PROJECTS_URL, headers=API_HEADERS)
+        response = conn.getresponse().read()
+        return _parse_response(response)
+
+    @classmethod
+    def lookup_project_id(cls, name):
+        '''
+        Return the project's ID with the given name.
+        If not found raise exception.
+        '''
+        
+        data = cls.get_projects()
+        
+        for project in data['items']:
+            if (project['name'] == name):
+                return int(project['id'])
+            
+        raise APIException('Unknown project name ' + name)
+
     def __init__(self, project_text):
-        self.id = api.lookup_project_id(project_text)
+        self.id = self.lookup_project_id(project_text)
         self.stories = []
         
-        stories_from_azen = api.list_stories(self.id)
+        stories_from_azen = self.az_api_list_stories()
         
         for story_from_azen in stories_from_azen['items']:
             story = Story(story_from_azen)
             self.stories.append(story)
+
+    def az_api_list_stories(self):
+        '''Return a list of all stories.'''
+        conn = httplib.HTTPSConnection(API_DOMAIN)
+        t = Template(STORIES_URL)
+        url = t.substitute(
+            dict(project_id=self.id)
+        ) + "?with=details,comments,tasks"
+        conn.request("GET", url, headers=API_HEADERS)
+        response = conn.getresponse().read()
+        return _parse_response(response)
+
+    def az_api_get_people(self, role=None):
+        path = API_PATH_PREFIX + '/projects/' + str(self.id) + '?with=roles'
+        conn = httplib.HTTPSConnection(API_DOMAIN)
+        conn.request('GET', path, headers=API_HEADERS)
+        response = conn.getresponse().read()
+        data = _parse_response(response)
+        
+        if role is not None:
+            role_dict = _detect(lambda r: r['name'] == role, data['roles'])
+            
+            if (role_dict):
+                return role_dict['members']
+            else:
+                raise APIException('Failed to read members with role <'
+                    + role + '> from API.')
+        else:
+            result = []
+            
+            for each in data['roles']:
+                result += each['members']
+            return result
 
     def get_stories(self):
         return self.stories
@@ -41,19 +129,18 @@ class Project(object):
             print 'wrote story: %i; %s' % (story.id, story.text)
 
         html_file.close()
-            
+
     def write_story_html(self, story_id):
         html_staging_path = './html_staging/%i' % self.id
         
         if not os.path.exists(html_staging_path):
             os.makedirs(html_staging_path, mode=0755)
 
-        html_staging_path_file = html_staging_path + '/' + str(project.id) + '.html'
-
-        story_file = open(html_staging_path_file, 'w')
+        html_staging_path_file = html_staging_path + '/' + str(self.id) + '.html'
 
         for story in self.stories:
-            story_file_path = html_staging_path + '/' + str(story.id) + '.html'
-            story_file = open(story_file_path, 'w')
-            story_file.write(story.get_html_formatted())
-            print 'wrote story: %i; %s' % (story.id, story.text)
+            if story.id == story_id:
+                story_file_path = html_staging_path + '/' + str(story.id) + '.html'
+                story_file = open(story_file_path, 'w')
+                story_file.write(story.get_html_formatted())
+                print 'wrote story: %i; %s' % (story.id, story.text)
