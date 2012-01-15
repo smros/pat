@@ -1,0 +1,11 @@
+>>> import os, sys
+>>> os.environ['DJANGO_SETTING_MODULE'] = 'settings'
+>>> from src.project import Project
+>>> p = Project('AIP Course Management')
+>>> p.get_stories_by_owner('Jerry Seutter')
+[<src.story.Story object at 0x301a650>]
+>>> p.get_stories_by_owner('Greg Saunders')
+[<src.story.Story object at 0x301a310>, <src.story.Story object at 0x301a290>, <src.story.Story object at 0x301a210>, <src.story.Story object at 0x301a250>, <src.story.Story object at 0x301a350>, <src.story.Story object at 0x301a390>, <src.story.Story object at 0x301a3d0>, <src.story.Story object at 0x301a410>, <src.story.Story object at 0x301a450>, <src.story.Story object at 0x301a490>, <src.story.Story object at 0x301a4d0>, <src.story.Story object at 0x301a590>, <src.story.Story object at 0x301a5d0>, <src.story.Story object at 0x301a610>]
+>>> len(p.get_stories_by_owner('Greg Saunders'))
+14
+>>> 

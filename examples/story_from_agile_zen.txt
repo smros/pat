@@ -1,0 +1,98 @@
+>>> import os, sys
+>>> os.environ['DJANGO_SETTING_MODULE'] = 'settings'
+>>> from src.project import Project
+>>> p = Project('AIP Course Management')
+>>> story_sections_from_azen = p.az_api_list_stories()
+>>> from pprint import pprint
+>>> for story_from_azen in story_sections_from_azen['items']:
+        if story_from_azen['id'] == 15:
+                pprint(story_from_azen)
+
+                
+{u'color': u'red',
+ u'comments': [{u'author': {u'email': u'jseutter@gmail.com',
+                            u'id': 39058,
+                            u'name': u'Jerry Seutter',
+                            u'userName': u'jseutter'},
+                u'createTime': u'2012-01-14T20:13:29',
+                u'id': 305580,
+                u'text': u'Taking time to add comments makes one feel useful.'}],
+ u'creator': {u'email': u'jseutter@gmail.com',
+              u'id': 39058,
+              u'name': u'Jerry Seutter',
+              u'userName': u'jseutter'},
+ u'deadline': u'2012-01-04T00:00:00',
+ u'details': u'These are details for the story.\nVery,\nvery,\nlong.',
+ u'id': 15,
+ u'metrics': {u'createTime': u'2012-01-14T20:12:50',
+              u'startTime': u'2012-01-14T20:12:50'},
+ u'milestones': [{u'duration': 82342,
+                  u'id': 3877853,
+                  u'phase': {u'id': 194448, u'name': u'Ready'},
+                  u'startTime': u'2012-01-14T20:12:50'}],
+ u'owner': {u'email': u'jseutter@gmail.com',
+            u'id': 39058,
+            u'name': u'Jerry Seutter',
+            u'userName': u'jseutter'},
+ u'phase': {u'id': 194448, u'name': u'Ready'},
+ u'priority': u'high',
+ u'project': {u'id': 33444, u'name': u'AIP Course Management'},
+ u'size': u'1 d',
+ u'status': u'started',
+ u'steps': [{u'duration': 82342,
+             u'id': 4579962,
+             u'startTime': u'2012-01-14T20:12:50',
+             u'type': u'working'}],
+ u'tags': [{u'id': 212236, u'name': u'tag1'},
+           {u'id': 212237, u'name': u'tag2'},
+           {u'id': 212238, u'name': u'tag3'}],
+ u'tasks': [{u'createTime': u'2012-01-14T20:12:50',
+             u'finishTime': u'2012-01-14T20:13:31',
+             u'finishedBy': {u'email': u'jseutter@gmail.com',
+                             u'id': 39058,
+                             u'name': u'Jerry Seutter',
+                             u'userName': u'jseutter'},
+             u'id': 732688,
+             u'status': u'complete',
+             u'text': u'Tasko numero uno'},
+            {u'createTime': u'2012-01-14T20:12:50',
+             u'id': 732689,
+             u'status': u'incomplete',
+             u'text': u'Tasko numero duos'}],
+ u'text': u'test story (can be deleted)'}
+>>> for story_from_azen in story_sections_from_azen['items']:
+        if story_from_azen['id'] == 14:
+                pprint(story_from_azen)
+
+                
+{u'color': u'teal',
+ u'comments': [],
+ u'creator': {u'email': u'greg@gearedinc.ca',
+              u'id': 39028,
+              u'name': u'Greg Saunders',
+              u'userName': u'geared'},
+ u'details': u'',
+ u'id': 14,
+ u'metrics': {u'createTime': u'2012-01-12T16:50:44',
+              u'startTime': u'2012-01-12T16:50:44'},
+ u'milestones': [{u'duration': 267268,
+                  u'id': 3863037,
+                  u'phase': {u'id': 194448, u'name': u'Ready'},
+                  u'startTime': u'2012-01-12T16:50:44'}],
+ u'owner': {u'email': u'greg@gearedinc.ca',
+            u'id': 39028,
+            u'name': u'Greg Saunders',
+            u'userName': u'geared'},
+ u'phase': {u'id': 194448, u'name': u'Ready'},
+ u'priority': u'',
+ u'project': {u'id': 33444, u'name': u'AIP Course Management'},
+ u'size': u'2 d',
+ u'status': u'started',
+ u'steps': [{u'duration': 267268,
+             u'id': 4562489,
+             u'startTime': u'2012-01-12T16:50:44',
+             u'type': u'working'}],
+ u'tags': [],
+ u'tasks': [],
+ u'text': u'end user training'}
+>>> 

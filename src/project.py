@@ -14,19 +14,11 @@ def _parse_response(response):
     
     if response is None:
         raise APIException('Failed to read data from API.')
+    
     try:
         return json.loads(response)
     except:
         raise APIException('Failed to parse data from API.')
-
-
-def _detect(fun, seq):
-    '''Return the first element that satisfies the predicate fun.'''
-    
-    for item in seq:
-        if fun(item):
-            return item
-    return None
 
 
 class APIException(Exception):
@@ -83,8 +75,8 @@ class Project(object):
         t = Template(STORIES_URL)
         url = t.substitute(
             dict(project_id=self.id)
-        ) + "?with=details,comments,tasks"
-        conn.request("GET", url, headers=API_HEADERS)
+        ) + '?with=everything'
+        conn.request('GET', url, headers=API_HEADERS)
         response = conn.getresponse().read()
         return _parse_response(response)
 
@@ -118,7 +110,7 @@ class Project(object):
     def get_stories(self):
         return self.stories
 
-    def get_story(self, id):
+    def get_story_by_id(self, id):
         story_to_return = None
         
         for story in self.stories:
@@ -126,6 +118,24 @@ class Project(object):
                 story_to_return = story
 
         return story_to_return
+
+    def get_story_by_text(self, text):
+        story_to_return = None
+        
+        for story in self.stories:
+            if story.text == text:
+                story_to_return = story
+
+        return story_to_return
+
+    def get_stories_by_owner(self, name):
+        stories_to_return = []
+
+        for story in self.stories:
+            if story.owner['name'] == name:
+                stories_to_return.append(story)
+
+        return stories_to_return
 
     def write_html(self):
         html_staging_path = './html_staging/%i' % self.id
