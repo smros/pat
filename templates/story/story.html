@@ -1,0 +1,30 @@
+<h3>{{ story.text }}</h3>
+
+
+{% if story.details %}
+	<h4>Details</h4>
+
+	{{ story.details|linebreaks }}
+{% endif %}
+
+
+{% if story.tasks %}
+	<h4>Tasks</h4>
+
+	<ul>
+		{% for task in story.tasks %}
+			<li>{{ task.text }}</li>
+		{% endfor %}
+	</ul>
+{% endif %}	
+
+
+{% if story.comments %}
+	<h4>Comments</h4>
+
+	<ul>
+		{% for comment in story.comments %}
+			<li>{{ comment.text }}</li>
+		{% endfor %}
+	</ul>
+{% endif %}

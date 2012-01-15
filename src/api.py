@@ -24,10 +24,10 @@ def get_projects():
     """Return a list of all projects."""
     conn = httplib.HTTPSConnection(API_DOMAIN)
     conn.request("GET", PROJECTS_URL, headers=API_HEADERS)
-    print 'got here 3'
-    print PROJECTS_URL
-    print API_HEADERS
-    print API_DOMAIN
+##    print 'got here 3'
+##    print PROJECTS_URL
+##    print API_HEADERS
+##    print API_DOMAIN
     response = conn.getresponse().read()
     return _parse_response(response)
 
@@ -58,13 +58,13 @@ def list_stories(project_id):
     conn = httplib.HTTPSConnection(API_DOMAIN)
     t = Template(STORIES_URL)
     url = t.substitute(dict(project_id=project_id)) + "?with=details,comments,tasks"
-    print 'got here 2'
-    print url
-    print API_HEADERS
-    print API_DOMAIN
+##    print 'got here 2'
+##    print url
+##    print API_HEADERS
+##    print API_DOMAIN
     conn.request("GET", url, headers=API_HEADERS)
     response = conn.getresponse().read()
-    print response
+##    print response
     return _parse_response(response)
 
 def get_story(project_id, story_id):
