@@ -116,6 +116,7 @@ class Project(object):
         for story in self.stories:
             if story.id == id:
                 story_to_return = story
+                break
 
         return story_to_return
 
@@ -125,6 +126,7 @@ class Project(object):
         for story in self.stories:
             if story.text == text:
                 story_to_return = story
+                break
 
         return story_to_return
 
@@ -137,7 +139,7 @@ class Project(object):
 
         return stories_to_return
 
-    def write_html(self):
+    def write_project_html(self):
         html_staging_path = './html_staging/%i' % self.id
         
         if not os.path.exists(html_staging_path):
