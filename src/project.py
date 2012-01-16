@@ -203,3 +203,5 @@ class Project(object):
                 story_file = open(story_file_path, 'w')
                 story_file.write(story.get_html_formatted())
                 print 'wrote story: %i; %s' % (story.id, story.text)
+                break
+            

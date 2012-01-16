@@ -1,5 +1,5 @@
 <h3>
-	{{ story.text }}
+	{{ story.text|capfirst }}
 	{% if story.size %}
 		: {{ story.size }}
 	{% endif %}
@@ -33,3 +33,10 @@
 		{% endfor %}
 	</ul>
 {% endif %}	
+
+{% if story.tags %}
+	{% for tag in story.tags %}
+		|&nbsp;{{ tag.name }}&nbsp;
+	{% endfor %}
+	|
+{% endif %}
