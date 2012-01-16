@@ -4,7 +4,14 @@ import httplib
 import json
 from string import Template
 
-from settings import *
+from settings import (
+    AGILE_ZEN_API_KEY,
+    API_DOMAIN,
+    API_PATH_PREFIX,
+    API_HEADERS,
+    PROJECTS_URL,
+    STORIES_URL
+)    
 
 from story import Story
 
@@ -29,9 +36,22 @@ class APIException(Exception):
 class Project(object):
 
     @classmethod
+    def get_project_by_id(cls, id):
+        conn = httplib.HTTPSConnection(API_DOMAIN)
+        conn.request(
+            'GET',
+            PROJECTS_URL + '/' + str(id) + '/?with=everything',
+            headers=API_HEADERS
+        )
+        response = conn.getresponse().read()
+        return _parse_response(response)
+
+    @classmethod
     def get_projects(cls):
         conn = httplib.HTTPSConnection(API_DOMAIN)
-        conn.request('GET', PROJECTS_URL, headers=API_HEADERS)
+        conn.request(
+            'GET', PROJECTS_URL + '?with=everything', headers=API_HEADERS
+        )
         response = conn.getresponse().read()
         return _parse_response(response)
 
@@ -53,19 +73,32 @@ class Project(object):
     def __init__(self, project_text):
         self.id = self.lookup_project_id(project_text)
         self.stories = []
-        
+
         stories_from_azen = self.az_api_list_stories()
         
         for story_from_azen in stories_from_azen['items']:
             story = Story(story_from_azen)
             self.stories.append(story)
 
-    def _detect(self, fun, seq):
-        '''Return the first element that satisfies the predicate fun.'''
+        project_from_azen = Project.get_project_by_id(self.id)
+
+        self.createTime  = project_from_azen['createTime']
+        self.description = project_from_azen['description']
+        self.details     = project_from_azen['details']
+        self.invites     = project_from_azen['invites']
+        self.members     = project_from_azen['members']
+        self.metrics     = project_from_azen['metrics']
+        self.name        = project_from_azen['name']
+        self.owner       = project_from_azen['owner']
+        self.phases      = project_from_azen['phases']
+        self.roles       = project_from_azen['roles']
+
+    def _detect(self, func, seq):
+        '''Return the first element that satisfies the predicate func.'''
         # I don't like this one bit <gis>
         
         for item in seq:
-            if fun(item):
+            if func(item):
                 return item
         return None
 
@@ -88,7 +121,7 @@ class Project(object):
         data = _parse_response(response)
         
         if role is not None:
-            # there has to be a better way to do this than "self._detect"
+            # there has to be a better way to do this than "self._detect" <gis>
             
             role_dict = self._detect(
                 lambda r: r['name'] == role, data['roles']
@@ -151,6 +184,7 @@ class Project(object):
 
         for story in self.stories:
             html_file.write(story.get_html_formatted())
+            html_file.write('<hr/>')
             print 'wrote story: %i; %s' % (story.id, story.text)
 
         html_file.close()

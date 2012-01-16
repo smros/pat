@@ -30,4 +30,3 @@ class Story(object):
             info_dict
         ).replace('\n', '').replace('\t', '')
         return html
-

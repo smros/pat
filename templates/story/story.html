@@ -1,10 +1,26 @@
-<h3>{{ story.text }}</h3>
+<h3>
+	{{ story.text }}
+	{% if story.size %}
+		: {{ story.size }}
+	{% endif %}
+</h3>
 
 
 {% if story.details %}
 	<h4>Details</h4>
 
 	{{ story.details|linebreaks }}
+{% endif %}
+
+
+{% if story.comments %}
+	<h4>Comments</h4>
+
+	<ul>
+		{% for comment in story.comments %}
+			<li>{{ comment.text }}</li>
+		{% endfor %}
+	</ul>
 {% endif %}
 
 
@@ -17,14 +33,3 @@
 		{% endfor %}
 	</ul>
 {% endif %}	
-
-
-{% if story.comments %}
-	<h4>Comments</h4>
-
-	<ul>
-		{% for comment in story.comments %}
-			<li>{{ comment.text }}</li>
-		{% endfor %}
-	</ul>
-{% endif %}
