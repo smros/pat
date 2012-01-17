@@ -1,0 +1,27 @@
+>>> ================================ RESTART ================================
+>>> import os
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+>>> from src.project import Project
+>>> p = Project('A.I.P. Course Management')
+>>> p.sum_stories_size(story_type='proposal', cost_category='base')
+Decimal('16.50')
+>>> p.sum_stories_size(story_type='proposal', cost_category='base 20')
+Decimal('2.50')
+>>> p = Project('A.I.P. Course Management')
+>>> p.write_stories_by_type_html('proposal', order_mask=1)
+wrote story: 2; instructor module
+wrote story: 3; course module
+wrote story: 4; client module
+wrote story: 5; document module
+wrote story: 6; communication module
+wrote story: 7; student module
+wrote story: 8; company_admin module
+wrote story: 9; admin reports
+wrote story: 10; wire-frame prep
+wrote story: 11; wire-frame workshop
+wrote story: 12; wire-frame documentation, review and approval
+wrote story: 13; course registration process
+wrote story: 14; end user training
+>>> p.write_project_html()
+wrote project: 33444; A.I.P. Course Management
+>>> 
