@@ -1,7 +1,10 @@
 # This app requires a "settings.py" file. Use this file as a template
-# and put your AgileZen API key in AGILE_ZEN_API_KEY
+# and put your AgileZen API key in AGILE_ZEN_API_KEY.
 
-AGILE_ZEN_API_KEY = '<your agilezen api key kere>'
+from decimal import Decimal
+
+
+AGILE_ZEN_API_KEY = '<your AgileZen API key here>'
 
 API_DOMAIN = 'agilezen.com'
 API_PATH_PREFIX = '/api/v1'
@@ -19,3 +22,37 @@ TEMPLATE_LOADERS = (
 TEMPLATE_DIRS = (
     '/home/greg/projects/pat/templates/',
 )
+
+''' Example
+
+TYPE_TAGS = (
+    'proposal',
+    'core component',
+)
+'''
+
+TYPE_TAGS = ()
+
+''' Example
+
+COST_CATEGORY_TAGS = (
+    'base',
+    'base 20',
+)
+'''
+
+COST_CATEGORY_TAGS = ()
+
+# Size should always be a "unit" such as "days" (d) and a value separated
+# by white space.
+
+''' Example
+
+STORY_SIZE_VALUES = {
+    'd': Decimal('8.00')
+    'day': Decimal('8.00')
+    'days': Decimal('8.00')
+}
+'''
+
+STORY_SIZE_VALUES = {}
