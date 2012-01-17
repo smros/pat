@@ -1,0 +1,9 @@
+<h2>{{ project.name }}</h2>
+
+{% if project.description %}
+	{{ project.description|safe }}
+{% endif %}
+
+{% if project.details %}
+	{{ project.details|safe }}
+{% endif %}

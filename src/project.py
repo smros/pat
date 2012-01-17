@@ -11,7 +11,9 @@ from settings import (
     API_HEADERS,
     PROJECTS_URL,
     STORIES_URL
-)    
+)
+
+from django.template.loader import render_to_string
 
 from story import Story
 
@@ -140,6 +142,9 @@ class Project(object):
                 result += each['members']
             return result
 
+    def get_project_description(self):
+        return self.description.replace('\n', '').replace('\t', '')
+
     def get_stories(self):
         return self.stories
 
@@ -172,13 +177,36 @@ class Project(object):
 
         return stories_to_return
 
+    def get_html_formatted(self):
+        info_dict = {'project': self}
+        html = render_to_string(
+            'project/project.html',
+            info_dict
+        ).replace('\n', '').replace('\t', '')
+        return html
+
     def write_project_html(self):
         html_staging_path = './html_staging/%i' % self.id
         
         if not os.path.exists(html_staging_path):
             os.makedirs(html_staging_path, mode=0755)
 
-        html_staging_path_file = html_staging_path + '/' + str(self.id) + '.html'
+        html_staging_path_file = \
+            html_staging_path + '/' + str(self.id) + '_project.html'
+
+        html_file = open(html_staging_path_file, 'w')
+        html_file.write(self.get_html_formatted())
+        print 'wrote project: %i; %s' % (self.id, self.name)
+        html_file.close()
+
+    def write_all_project_stories_html(self):
+        html_staging_path = './html_staging/%i' % self.id
+        
+        if not os.path.exists(html_staging_path):
+            os.makedirs(html_staging_path, mode=0755)
+
+        html_staging_path_file = \
+            html_staging_path + '/' + str(self.id) + '.html'
 
         html_file = open(html_staging_path_file, 'w')
 

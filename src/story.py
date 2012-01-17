@@ -1,4 +1,3 @@
-from django.template import Context, Template
 from django.template.loader import render_to_string
 
 
