@@ -3,6 +3,7 @@ import os.path
 import httplib
 import json
 from string import Template
+from decimal import Decimal
 
 from settings import (
     AGILE_ZEN_API_KEY,
@@ -10,7 +11,8 @@ from settings import (
     API_PATH_PREFIX,
     API_HEADERS,
     PROJECTS_URL,
-    STORIES_URL
+    STORIES_URL,
+    STORY_SIZE_VALUES,
 )
 
 from django.template.loader import render_to_string
@@ -76,28 +78,81 @@ class Project(object):
         self.id = self.lookup_project_id(project_text)
         self.stories = []
 
+        project_from_azen = Project.get_project_by_id(self.id)
+        self.createTime   = project_from_azen['createTime']
+        self.description  = project_from_azen['description']
+        self.details      = project_from_azen['details']
+        self.invites      = project_from_azen['invites']
+        self.members      = project_from_azen['members']
+        self.metrics      = project_from_azen['metrics']
+        self.name         = project_from_azen['name']
+        self.owner        = project_from_azen['owner']
+        self.phases       = project_from_azen['phases']
+        self.roles        = project_from_azen['roles']
+
+        self.cost_categories = []
+
         stories_from_azen = self.az_api_list_stories()
         
         for story_from_azen in stories_from_azen['items']:
-            story = Story(story_from_azen)
+            story = Story(self, story_from_azen)
             self.stories.append(story)
 
-        project_from_azen = Project.get_project_by_id(self.id)
+    def get_stories_by_type(self, story_type, order_mask=0):
+        if order_mask == 0:
+            story_fiter_string = '%s' % (story_type)
+            ordering = False
+            stories = []
+        else:
+            story_fiter_string = '%s %i' % (story_type, order_mask)
+            ordering = True
+            stories = {}
 
-        self.createTime  = project_from_azen['createTime']
-        self.description = project_from_azen['description']
-        self.details     = project_from_azen['details']
-        self.invites     = project_from_azen['invites']
-        self.members     = project_from_azen['members']
-        self.metrics     = project_from_azen['metrics']
-        self.name        = project_from_azen['name']
-        self.owner       = project_from_azen['owner']
-        self.phases      = project_from_azen['phases']
-        self.roles       = project_from_azen['roles']
+        for story in self.stories:
+            for tag in story.tags:
+                if tag['name'].find(story_fiter_string) > -1:
+                    if ordering:
+                        story_type_from_tag, order = tag['name'].split()
+                        order = Decimal(order)
+                        stories[order] = story
+                    else:
+                        stories.append(story)
+
+        if ordering:
+            stories_ordered = []
+            keys = stories.keys()
+            keys.sort()
+            
+            for key in keys:
+                stories_ordered.append(stories[key])
+
+            stories = stories_ordered
+
+        return stories
+
+    def get_stories_by_type_cost_category(
+        self, story_type=None, cost_category=None):
+        
+        stories_type_list = []
+        stories_cost_category_list = []
+
+        for story in self.stories:
+            for tag in story.tags:
+                if tag['name'].find(story_type) > -1:
+                    stories_type_list.append(story)
+
+        for story in self.stories:
+            for tag in story.tags:
+                if tag['name'] == cost_category:
+                    stories_cost_category_list.append(story)
+
+        return set(stories_type_list).intersection(
+            set(stories_cost_category_list)
+        )
 
     def _detect(self, func, seq):
         '''Return the first element that satisfies the predicate func.'''
-        # I don't like this one bit <gis>
+        # I don't like this one bit ... maybe I just don't get it :) <gis>
         
         for item in seq:
             if func(item):
@@ -185,6 +240,19 @@ class Project(object):
         ).replace('\n', '').replace('\t', '')
         return html
 
+    def sum_stories_size(self, story_type=None, cost_category=None):
+        stories = self.get_stories_by_type_cost_category(
+            story_type=story_type, cost_category=cost_category
+        )
+        total_size = Decimal('0.00')
+
+        for story in stories:
+            size, unit = story.size.split()
+            size = Decimal(size)
+            total_size += size
+
+        return total_size
+
     def write_project_html(self):
         html_staging_path = './html_staging/%i' % self.id
         
@@ -206,11 +274,31 @@ class Project(object):
             os.makedirs(html_staging_path, mode=0755)
 
         html_staging_path_file = \
-            html_staging_path + '/' + str(self.id) + '.html'
+            html_staging_path + '/' + str(self.id) + '_all_stories.html'
 
         html_file = open(html_staging_path_file, 'w')
 
         for story in self.stories:
+            html_file.write(story.get_html_formatted())
+            html_file.write('<hr/>')
+            print 'wrote story: %i; %s' % (story.id, story.text)
+
+        html_file.close()
+
+    def write_stories_by_type_html(self, story_type, order_mask=0):
+        html_staging_path = './html_staging/%i' % self.id
+        
+        if not os.path.exists(html_staging_path):
+            os.makedirs(html_staging_path, mode=0755)
+
+        html_staging_path_file = \
+            html_staging_path + '/' + str(self.id) + '_' + story_type + '.html'
+
+        html_file = open(html_staging_path_file, 'w')
+
+        stories = self.get_stories_by_type(story_type, order_mask=order_mask)
+
+        for story in stories:
             html_file.write(story.get_html_formatted())
             html_file.write('<hr/>')
             print 'wrote story: %i; %s' % (story.id, story.text)
@@ -227,9 +315,9 @@ class Project(object):
 
         for story in self.stories:
             if story.id == story_id:
-                story_file_path = html_staging_path + '/' + str(story.id) + '.html'
+                story_file_path = \
+                    html_staging_path + '/' + str(story.id) + '.html'
                 story_file = open(story_file_path, 'w')
                 story_file.write(story.get_html_formatted())
                 print 'wrote story: %i; %s' % (story.id, story.text)
                 break
-            
