@@ -35,8 +35,10 @@
 {% endif %}	
 
 {% if story.tags %}
+	<p>
 	{% for tag in story.tags %}
 		|&nbsp;{{ tag.name }}&nbsp;
 	{% endfor %}
 	|
+	</p>
 {% endif %}

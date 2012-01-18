@@ -43,15 +43,12 @@ COST_CATEGORY_TAGS = (
 
 COST_CATEGORY_TAGS = ()
 
-# Size should always be a "unit" such as "days" (d) and a value separated
-# by white space.
-
 ''' Example
 
 STORY_SIZE_VALUES = {
-    'd': Decimal('8.00')
-    'day': Decimal('8.00')
-    'days': Decimal('8.00')
+    'd': Decimal('8.00'),
+    'day': Decimal('8.00'),
+    'days': Decimal('8.00'),
 }
 '''
 
