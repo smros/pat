@@ -44,7 +44,7 @@ def list_stories_filter_by_user_and_tag(project_id, user=None, tag=None):
 
     print 'Going to request with this URL:'
     print url
-    zzz=raw_input('waiting...')
+    #zzz=raw_input('waiting...')
 
     conn.request("GET", url, headers=API_HEADERS)
     response = conn.getresponse().read()

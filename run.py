@@ -52,7 +52,20 @@ print 'storiesDict:'
 
 print storiesDict
 
-story=3
+story=4
+
+print "Here's story " + str(story)
+print storiesDict[story]
+
+print "Here's story " + str(story) + "'s comments"
+comments=storiesDict[story]['comments']
+print comments
+for item in comments:
+    print item['text']
+    print item['createTime']
+    print item['author']['userName']
+
+zzz=raw_input('Waiting...')
 
 print 'Milestones for item ' + str(story)
 milestones= storiesDict[story]['milestones']
