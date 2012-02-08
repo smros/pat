@@ -25,7 +25,7 @@ for key, val in item.iteritems():
 
 
 # Lookup a non-archived project (case sensitive)
-project_id = api.lookup_project_id('AIP Course Management')
+project_id = api.lookup_project_id('Test Project')
 print
 print 'Project:', project_id
 
@@ -33,6 +33,8 @@ print 'Project:', project_id
 print
 print 'Stories:'
 stories = api.list_stories(project_id)
+
+storiesDict=dict()
 
 for item in stories['items']:
     print 'raw:', item
@@ -43,4 +45,36 @@ for item in stories['items']:
     print '  details:', item['details']
     print '  comments:', item['comments']
     print '  tasks:', item['tasks']
+    print '  milestones:', item['milestones']
+    storiesDict[item['id']]=item
+
+print 'storiesDict:'
+
+print storiesDict
+
+story=3
+
+print 'Milestones for item ' + str(story)
+milestones= storiesDict[story]['milestones']
+
+for item in milestones:
+    print item
+
+
+print 'Test Pull stories by username'
+
+stories=api.list_stories_filter_by_user_and_tag(project_id,user='smroszczak')
+for item in stories:
+    print item
+
+print 'Test Pull stories by tag'
+
+stories=api.list_stories_filter_by_user_and_tag(project_id,tag='government_renewal')
+print stories
+for item in stories:
+    print item
+
+#print 'Test Pull stories by tag and username'
+
+
     

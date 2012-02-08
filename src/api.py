@@ -20,6 +20,37 @@ PROJECTS_URL = 'https://agilezen.com/api/v1/projects'
 STORIES_URL = 'https://agilezen.com/api/v1/projects/${project_id}/stories'
 
 
+def list_stories_filter_by_user_and_tag(project_id, user=None, tag=None):
+    """Return a list of all stories.  Add a filter for user (if supplied) and/or
+    tag (if supplied). Example: /api/v1/projects/35424/stories?where=tag:government_renewal &with=milestones
+    Doesn't work yet with owner, creator, need to figure out how to drill deeper
+    into the returned objects."""
+    conn = httplib.HTTPSConnection(API_DOMAIN)
+    t = Template(STORIES_URL)
+    url = t.substitute(dict(project_id=project_id)) + "?with=creator,owner,details,comments,tasks,milestones"
+
+    # Filter string
+
+    if user or tag:
+        filter='&where='
+        if user:
+            filter+='owner:'+user
+            if tag:
+                filter+=' and tag:'+tag
+        else:
+            filter+='tag:'+tag
+
+        url+=filter
+
+    print 'Going to request with this URL:'
+    print url
+    zzz=raw_input('waiting...')
+
+    conn.request("GET", url, headers=API_HEADERS)
+    response = conn.getresponse().read()
+##    print response
+    return _parse_response(response)
+
 def get_projects():
     """Return a list of all projects."""
     conn = httplib.HTTPSConnection(API_DOMAIN)
@@ -57,7 +88,7 @@ def list_stories(project_id):
     """Return a list of all stories."""
     conn = httplib.HTTPSConnection(API_DOMAIN)
     t = Template(STORIES_URL)
-    url = t.substitute(dict(project_id=project_id)) + "?with=details,comments,tasks"
+    url = t.substitute(dict(project_id=project_id)) + "?with=details,comments,tasks,milestones"
 ##    print 'got here 2'
 ##    print url
 ##    print API_HEADERS
