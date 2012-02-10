@@ -39,8 +39,6 @@ if __name__ == "__main__":
     projects=api.get_projects()
     print projects
 
-
-
     for item in projects['items']:
         watchersDict=dict()
         id=item['id']

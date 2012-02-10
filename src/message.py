@@ -25,7 +25,7 @@ ALT_PROJECT_STORY_RE = '\[(\w*)\].*\(\#(\d*)\)'
 NEW_STORY_RE = '\) was created by '
 MARKED_BLOCKED_RE = '\) was blocked by '
 MARKED_DEPLOYED_RE = '\) was moved from .*? to Deployed'
-MOVED_TO_READY_RE = 'was moved from .*? to Ready'
+MOVED_TO_READY_RE = 'was moved from .*? to Working'
 CAUSER_RE = '\sby\s([A-Z]\w+\s[A-Z]\w+)'
 
 

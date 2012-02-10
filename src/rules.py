@@ -10,10 +10,12 @@ import api
 import yaml
 import os.path
 from ConfigParser import RawConfigParser
+import syslog
+
 
 # load config
 CFG_PATH = os.path.join(
-    os.path.dirname(__file__), 'notify.cfg')
+    os.path.dirname(__file__), '..', 'notify.cfg')
 CONFIG = RawConfigParser()
 CONFIG.read(CFG_PATH)
 WATCHER_PATH = CONFIG.get('watcher', 'path')
@@ -90,20 +92,18 @@ def creators(msg):
 def watchers(msg):
     """Return a set with all the current watchers of this story"""
     # get msg ID
-    storyID=msd.id
-    print 'My story ID is '+ str(storyID)
+    storyID=msg.story_id
+    print( 'My story ID is '+ str(storyID))
     # get project ID
     projID=msg.project_id
-    print 'My project ID is: ' + str(projID)
+    print( 'My project ID is: ' + str(projID))
     # get watchers (as emails) from yaml file from msg ID
     fpath=os.path.join(WATCHER_PATH,str(projID)+'.yaml')
-    print 'Attempting to open watcher file:' + fpath
+    print( 'Attempting to open watcher file:' + fpath)
     f=open(fpath,'rt')
     watcherDict=yaml.load(f)
     f.close()
     watcherList=watcherDict[storyID]
-    print 'My watcher list is: '
-    print watcherList
+    print( 'My watcher list is: ')
+    syslog.syslog( 'In watchers handler')
     return(set(watcherList))
-
-
