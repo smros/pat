@@ -13,7 +13,7 @@ CFG_PATH = os.path.join(
 CONFIG = RawConfigParser()
 CONFIG.read(CFG_PATH)
 SENDER_MAIL = CONFIG.get('mail', 'sender')
-SMPT_SERVER = CONFIG.get('mail', 'smtp_server')
+SMTP_SERVER = CONFIG.get('mail', 'smtp_server')
 
 
 class MailHandler():
@@ -41,7 +41,7 @@ class MailHandler():
         part2 = MIMEText(content, 'html', 'utf-8')
         msg.attach(part1)
         msg.attach(part2)
-        smtp = smtplib.SMTP(SMPT_SERVER)
+        smtp = smtplib.SMTP(SMTP_SERVER)
         smtp.sendmail(SENDER_MAIL, recipients, msg.as_string())
         smtp.close()
         

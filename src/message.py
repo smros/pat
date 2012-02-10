@@ -9,6 +9,9 @@ This code further assumes, that active members of a project have a role
 named 'Members' (this is the default).
 """
 
+""" Need REGEX for  [Test Project] Test Story for notify (5) was reassigned from Steve Mroszczak to Johnny Cordova by Steve Mroszczak """
+""" [Test Project] Testing Assigning story to Joh... (6) has started[Test Project] Testing Assigning story to Joh... (6) was created by Steve Mroszczak """
+
 import time
 import re
 import StringIO
@@ -25,8 +28,10 @@ ALT_PROJECT_STORY_RE = '\[(\w*)\].*\(\#(\d*)\)'
 NEW_STORY_RE = '\) was created by '
 MARKED_BLOCKED_RE = '\) was blocked by '
 MARKED_DEPLOYED_RE = '\) was moved from .*? to Deployed'
+MARKED_REASSIGNED_RE = '\) was reassigned from '
 MOVED_TO_READY_RE = 'was moved from .*? to Working'
 CAUSER_RE = '\sby\s([A-Z]\w+\s[A-Z]\w+)'
+ASSIGNED_TO_RE = '\sto\s([A-Z]\w+\s[A-Z]\w+)'
 
 
 class AZMessage():
