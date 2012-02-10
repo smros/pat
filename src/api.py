@@ -57,6 +57,18 @@ def get_story(project_id, story_id):
     response = conn.getresponse().read()
     return _parse_response(response)
 
+def get_stories(project_id):
+    """Return the details and comments of all stories with a project ID"""
+    path = API_PATH_PREFIX
+    path +='/projects/' + str(project_id) + '/stories/'
+    path += '?with=details,comments,tags'
+    print path
+    conn = httplib.HTTPSConnection(API_DOMAIN)
+    conn.request("GET", path, headers=API_HEADERS)
+    response = conn.getresponse().read()
+    print response
+    return _parse_response(response)
+
 def get_active_project_ids():
     """Return a the IDs of all non-archived projects.""" 
     data = get_projects()
@@ -79,6 +91,7 @@ def _parse_response(response):
     try:
         return json.loads(response)
     except:
+        print response
         raise APIException('Failed to parse data from API.')
 
 def _detect(fun, seq):

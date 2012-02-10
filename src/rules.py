@@ -7,12 +7,22 @@ from handlers.feed.handler import FeedHandler
 from handlers.mail.handler import MailHandler
 from handlers.webhook.handler import WebhookHandler
 import api
+import yaml
+import os.path
+from ConfigParser import RawConfigParser
+
+# load config
+CFG_PATH = os.path.join(
+    os.path.dirname(__file__), 'notify.cfg')
+CONFIG = RawConfigParser()
+CONFIG.read(CFG_PATH)
+WATCHER_PATH = CONFIG.get('watcher', 'path')
 
 
 def create_handlers(debugging=False):
     """Return a list of handlers."""
     handlers = [
-        MailHandler(is_moved_to_ready, active_members_without_creator),
+        MailHandler(is_moved_to_ready, watchers),
         MailHandler(is_marked_blocked, everyone),
         MailHandler(is_marked_deployed, active_members_with_creator),
         FeedHandler(u'AgileZen: all', 'all', always),
@@ -76,3 +86,24 @@ def creators(msg):
     """Return a set with the creator's mail address."""
     creator = msg.creator_mail
     return set((creator, ))
+
+def watchers(msg):
+    """Return a set with all the current watchers of this story"""
+    # get msg ID
+    storyID=msd.id
+    print 'My story ID is '+ str(storyID)
+    # get project ID
+    projID=msg.project_id
+    print 'My project ID is: ' + str(projID)
+    # get watchers (as emails) from yaml file from msg ID
+    fpath=os.path.join(WATCHER_PATH,str(projID)+'.yaml')
+    print 'Attempting to open watcher file:' + fpath
+    f=open(fpath,'rt')
+    watcherDict=yaml.load(f)
+    f.close()
+    watcherList=watcherDict[storyID]
+    print 'My watcher list is: '
+    print watcherList
+    return(set(watcherList))
+
+
