@@ -6,6 +6,7 @@ from handlers.debug.handler import PrintHandler
 from handlers.feed.handler import FeedHandler
 from handlers.mail.handler import MailHandler
 from handlers.webhook.handler import WebhookHandler
+from handlers.state.handler import StateHandler
 import api
 import yaml
 import os.path
@@ -24,6 +25,7 @@ WATCHER_PATH = CONFIG.get('watcher', 'path')
 def create_handlers(debugging=False):
     """Return a list of handlers."""
     handlers = [
+        StateHandler(is_new, watchers),
         MailHandler(is_moved_to_ready, watchers),
         MailHandler(is_marked_blocked, everyone),
         MailHandler(is_marked_deployed, active_members_with_creator),
