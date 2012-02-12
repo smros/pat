@@ -4,6 +4,7 @@ import os.path
 import sys
 sys.path.append('../../src')
 import api
+import yaml
 
 ## Config stuff here
 
@@ -42,7 +43,7 @@ class StateHandler():
             storyList.append(message.creator_mail)
             storyDict[storyID]=list(set(storyList))
         else:
-            storyDict[storyID]=list(message.creator_mail)
+            storyDict[storyID]=[message.creator_mail]
 
         try:
             f=open(fname,'wt')
