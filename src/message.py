@@ -58,6 +58,8 @@ class AZMessage():
         self.color = None
         self.creator = None
         self.creator_mail = None
+        self.owner = None
+        self.owner_mail = None
         self.content = None
         self.content_plain = None
 
@@ -105,6 +107,8 @@ class AZMessage():
             self.tags = story['tags']
             self.creator = story['creator']['name']
             self.creator_mail = story['creator']['email']
+            self.owner = story['owner']['name']
+            self.owner_mail = story['owner']['email']
         except KeyError as err:
             raise MessageCreationException(
                 'Failed to read data from API: ' + str(err))

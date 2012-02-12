@@ -103,7 +103,22 @@ def watchers(msg):
     f=open(fpath,'rt')
     watcherDict=yaml.load(f)
     f.close()
-    watcherList=watcherDict[storyID]
+
+    if not watcherDict.__contains__(storyID):
+        # story is not tracked for some reason add in the creator and owner
+        currentList=[ msg.creator_mail, msg.owner_mail ]
+        currentList=list(set(currentList))
+        print currentList
+        watcherDict[msg.story_id] = currentList
+
+        print watcherDict
+
+        f=open(fpath,'wt')
+        f.write(yaml.dump(watcherDict))
+        f.close()
+
+    
+    watcherList=watcherDict[msg.story_id]
     print( 'My watcher list is: ')
     syslog.syslog( 'In watchers handler')
     return(set(watcherList))
