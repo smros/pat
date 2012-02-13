@@ -23,6 +23,11 @@ class StateHandler():
         self.getrecipients = getrecipients
         
     def handle(self, message):
+
+        # Load the yaml for the stored watcher list,
+        # get the owner and creator for the given story, then add them
+        # to the list and 'set' the list to remove duplicates.
+
         print message
         prjID=message.project_id
         storyID=message.story_id
@@ -41,9 +46,12 @@ class StateHandler():
         if storyDict.__contains__(storyID):
             storyList=storyDict[storyID]
             storyList.append(message.creator_mail)
-            storyDict[storyID]=list(set(storyList))
+            storyList.append(message.owner_mail)
+
         else:
-            storyDict[storyID]=[message.creator_mail]
+            storyList=[message.creator_mail, message.owner_mail]
+
+        storyDict[storyID]=list(set(storyList))
 
         try:
             f=open(fname,'wt')
