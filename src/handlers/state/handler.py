@@ -1,10 +1,10 @@
 """A handle for updating the yaml state files."""
 from ConfigParser import RawConfigParser
 import os.path
-import sys
-sys.path.append('../../src')
 import api
 import yaml
+import sys
+sys.path.append('../../src')
 
 ## Config stuff here
 
