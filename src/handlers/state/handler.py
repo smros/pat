@@ -36,20 +36,29 @@ class StateHandler():
         try:
             print fname
             f=open(fname,'rt')
+            storyDict=yaml.load(f)
         except IOError as e:
-            print 'Exception in file open, in state handler.'
+            print 'Exception in file open, in state handler, creating file'
             print e
-
-        storyDict=yaml.load(f)
+            # File doesn't exist,create it
+            f=open(fname,'wt')
+            f.close()
+            f=open(fname,'rt')
+            storyDict=dict()
+        
         f.close()
 
-        if storyDict.__contains__(storyID):
-            storyList=storyDict[storyID]
-            storyList.append(message.creator_mail)
-            storyList.append(message.owner_mail)
+        if storyDict:
+            if storyDict.__contains__(storyID):
+                storyList=storyDict[storyID]
+                storyList.append(message.creator_mail)
+                storyList.append(message.owner_mail)
+            else:
+                storyList=[message.creator_mail, message.owner_mail]
 
         else:
             storyList=[message.creator_mail, message.owner_mail]
+            storyDict=dict()
 
         storyDict[storyID]=list(set(storyList))
 
