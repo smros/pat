@@ -26,8 +26,6 @@ WATCHER_PATH = os.path.join(
     os.path.dirname(__file__), '..',CONFIG.get('watcher', 'path') )
 API_KEY = CONFIG.get('api','key')
 
-
-
 if __name__ == "__main__":
 
 #    zz=raw_input('This will overwrite any existing watcher files.  Proceed? (Y/N)?')
