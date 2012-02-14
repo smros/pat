@@ -63,5 +63,3 @@ if __name__ == "__main__":
         print watchersDict
         f.write(yaml.dump(watchersDict))
         f.close()
-
-
