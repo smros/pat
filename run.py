@@ -1,9 +1,9 @@
+########
 import sys
-
 sys.path.append('src')
-
 import api
 
+########
 
 result = api.get_projects()
 print
