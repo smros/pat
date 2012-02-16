@@ -7,6 +7,7 @@ from handlers.feed.handler import FeedHandler
 from handlers.mail.handler import MailHandler
 from handlers.webhook.handler import WebhookHandler
 from handlers.state.handler import StateHandler
+from handlers.db.handler import dbHandler
 import api
 import yaml
 import os.path
@@ -26,6 +27,7 @@ def create_handlers(debugging=False):
     """Return a list of handlers."""
     handlers = [
         StateHandler(always, watchers),
+        dbHandler(is_moved_to_working,None),
         MailHandler(is_moved_to_ready, watchers),
         MailHandler(is_marked_blocked, everyone),
         MailHandler(is_marked_deployed, active_members_with_creator),

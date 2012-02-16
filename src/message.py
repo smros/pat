@@ -27,9 +27,10 @@ PROJECT_STORY_RE = 'https://agilezen.com/project/(\d*)/story/(\d*)'
 ALT_PROJECT_STORY_RE = '\[(\w*)\].*\(\#(\d*)\)'
 NEW_STORY_RE = '\) was created by '
 MARKED_BLOCKED_RE = '\) was blocked by '
-MARKED_DEPLOYED_RE = '\) was moved from .*? to Deployed'
+MARKED_IDLE_RE = '\) was moved from .*? to Working-Idle'
 MARKED_REASSIGNED_RE = '\) was reassigned from '
-MOVED_TO_READY_RE = 'was moved from .*? to Working'
+MOVED_TO_WORKING_RE = 'was moved from .*? to Working'
+MOVED_TO_READY_RE = 'was moved from .*? to Ready'
 CAUSER_RE = '\sby\s([A-Z]\w+\s[A-Z]\w+)'
 ASSIGNED_TO_RE = '\sto\s([A-Z]\w+\s[A-Z]\w+)'
 
@@ -197,11 +198,17 @@ class AZMessage():
         """    
         return re.search(MARKED_BLOCKED_RE, self.title) is not None
     
-    def is_marked_deployed(self):
+    def is_marked_idle(self):
         """Returns true if the message was triggered when moving story
         to deployed.
         """
-        return re.search(MARKED_DEPLOYED_RE, self.title) is not None
+        return re.search(MARKED_IDLE_RE, self.title) is not None
+
+    def is_moved_to_working(self):
+        """Returns true if the current story is moved into the ready queue."""
+        moved_ready = re.search(MOVED_TO_WORKING_RE, self.title) is not None
+        new_and_started = self.is_new() and self.status == 'started'
+        return moved_ready or new_and_started
 
     def __str__(self):
         return "<AZMessage '" + self.title + "' [" + self.guid + "]>"

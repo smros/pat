@@ -7,6 +7,7 @@ __author__="steve"
 __date__ ="$16-Feb-2012 10:42:38 AM$"
 
 import sqlite
+import datetime
 
 class projectStoriesDB(sqlliteDB):
 
@@ -37,16 +38,15 @@ class projectStoriesDB(sqlliteDB):
         self.executeScript(tableInit)
         self.closeDB()
 
-    def insertEvent(self, kindleQuoteRecord):
+    def insertEvent(self, message):
         # Build the sql trasaction here and run the insert
-        prefix = ''' insert or ignore into quotes values (?,?,?,?,?,?,?)'''
-        dataTuple=(kindleQuoteRecord.title,
-        kindleQuoteRecord.author,
-        kindleQuoteRecord.locBegin,
-        kindleQuoteRecord.locEnd,
-        kindleQuoteRecord.pageString,
-        kindleQuoteRecord.dateString,
-        kindleQuoteRecord.content)
+        prefix = ''' insert or ignore into quotes values (?,?,?,?,?)'''
+        dataTuple=(message.project_id,
+        message.story_id,
+        message.owner,
+        message.locEnd,
+        datetime.datetime.now().isoformat('-')
+        )
 
 #        print prefix
 #        print dataTuple
