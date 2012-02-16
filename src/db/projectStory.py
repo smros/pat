@@ -6,7 +6,7 @@
 __author__="steve"
 __date__ ="$16-Feb-2012 10:42:38 AM$"
 
-import sqlite
+from sqllite import sqlliteDB
 import datetime
 
 class projectStoriesDB(sqlliteDB):
@@ -53,9 +53,9 @@ class projectStoriesDB(sqlliteDB):
 
         self.executeTransaction2(prefix, dataTuple)
 
-    def getQuotesFromBook(self, bookTitle):
-        prefix = ''' select content from quotes where title = ?'''
-        data=self.executeQueryFetchAll2(prefix, bookTitle)
+    def getEvent(self, projectID=None, storyID=None, owner=None, startTime=None):
+        prefix = ''' select endTime from projectStories where project = ? and story = ? and owner = ? and startTime = ? '''
+        data=self.executeQueryFetchAll2(prefix, (projectID, storyID, owner, startTime ) )
         return(data)
 
     def getTitlesFromDB(self):
@@ -67,9 +67,17 @@ class projectStoriesDB(sqlliteDB):
 
 if __name__ == "__main__":
 
-    q=quotesDB('agileZenStories.db')
-    #q.createQuotesDB()
-
+    q=projectStoriesDB('agileZenStories.db')
+    #q.createProjectStoriesDB()
+    data=q.getEvent('12345', '1', 'steve','2008-01-01-12:00:00')
+    print data
+    data=q.getEvent('99999', '3', 'johnny','1999-01-01-12:00:00')
+    print data
+    data=q.getEvent('99999', '3', 'johnny','1999-01-01-12:01:00')
+    print data
     
- 
+    q.closeDB()
+
+
+    #q.createQuotesDB()
 
